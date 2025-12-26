@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKEYang - 资源导航站</title>
+    <style>
+        /* 全局样式重置与基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        :root {
+            --primary-color: #165DFF;
+            --secondary-color: #0F3B86;
+            --bg-color: #0F172A;
+            --card-bg: rgba(15, 23, 42, 0.8);
+            --hover-bg: rgba(22, 93, 255, 0.2);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            /* 背景图：替换为自己的背景（建议用深色图） */
+            background: url("https://global.bing.com/th?id=OHR.LakeLouise_ZH-CN9592539152_UHD.jpg") no-repeat center/cover;
+            background-attachment: fixed; /* 背景固定 */
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 头部样式 */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .site-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* 搜索框样式 */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--hover-bg);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* 主导航样式 */
+        .main-nav {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .main-nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .main-nav a:hover, .main-nav a.active {
+            background: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        /* 资源卡片样式 */
+        .resource-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 25px;
+        }
+
+        .resource-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 链接组样式 */
+        .link-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .link-item {
+            display: inline-block;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .link-item:hover {
+            background: var(--hover-bg);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 标签页核心样式 - 修复显示隐藏问题 */
+        .tab-content {
+            display: none; /* 默认隐藏所有标签页 */
+            animation: fadeIn 0.5s ease forwards; /* 添加入场动画 */
+        }
+        .tab-content.active {
+            display: block; /* 仅显示激活的标签页 */
+        }
+
+        /* 入场动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式样式 */
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 2rem;
+            }
+
+            .resource-container {
+                padding: 0 10px;
+            }
+
+            .main-nav {
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .main-nav a {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .link-item {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <!-- 头部区域 -->
+    <header>
+        <h1 class="site-title">NIKEyang</h1>
+        <!-- 百度搜索表单 -->
+        <form class="search-container" action="https://www.baidu.com/s" method="get" target="_blank">
+            <input type="text" class="search-input" placeholder="搜索资源..." name="wd" value="">
+            <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </form>
+    </header>
+
+
+    <!-- 主导航 -->
+    <nav class="main-nav">
+        <a href="#tab-home" class="active">首页</a>
+        <a href="#tab-work">工作</a>
+        <a href="#tab-study">学习</a>
+        <a href="#tab-me">个人</a>
+    </nav>
+
+    <!-- 1. 首页页面 -->
+    <div id="tab-home" class="tab-content active">
+        <div class="resource-container">
+        <!-- AI 学习资源卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-robot card-icon"></i>
+                <h2 class="card-title">腾讯 | 腾讯云</h2>
+            </div>
+            <div class="link-group">
+                <a href="https://momoyu.cc/" class="link-item">摸摸鱼</a>
+                <a href="https://www.52pojie.cn/" class="link-item">吾爱破解🔥</a>
+            </div>
+        </div>
+      
+
+        <!-- 云盘资源卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-cloud card-icon"></i>
+                <h2 class="card-title">云盘 | 搜索</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">网盘临检 🔥</a>
+
+            </div>
+        </div>
+
+        <!-- 论坛文档卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-file-text card-icon"></i>
+                <h2 class="card-title">论坛 | 文档</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">XS Notes 🔥</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- 2. 工作页面 -->
+    <div id="tab-work" class="tab-content">
+        <div class="resource-container">
+        <!-- 腾讯云控制台卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-robot card-icon"></i>
+                <h2 class="card-title">腾讯 | 腾讯云</h2>
+            </div>
+            <div class="link-group">
+                <a href="https://cloud.tencent.com/edu/training" class="link-item">考试目录</a>
+                <a href="https://cloud.tencent.com/privatecloud/authorize?originUrl=document%3Fsolution%3D%25E8%2585%25BE%25E8%25AE%25AF%25E4%25B8%2593%25E6%259C%2589%25E4%25BA%2591%25E4%25BC%2581%25E4%25B8%259A%25E7%2589%2588%2520TCE%26version%3D3.10.0%26folder_id%3D78677858065588224%26dir%3D%25E8%25A7%25A3%25E5%2586%25B3%25E6%2596%25B9%25E6%25A1%2588%25E6%2596%2587%25E6%25A1%25A3" class="link-item">TCE文档中心</a>
+                <a href="https://yujie.habo.qq.com/login" class="link-item">NDR规则库 🔥</a>
+                <a href="https://eti.qq.com/html/offlinedownload.html" class="link-item">SOC规则库</a>
+                <a href="https://git.woa.com/yunjing/tce-pkgs/tree/master/vul/" class="link-item">主机安全规则库</a>
+            </div>
+        </div>
+      
+
+        <!-- 威胁情报卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-cloud card-icon"></i>
+                <h2 class="card-title">威胁情报中心</h2>
+            </div>
+            <div class="link-group">
+                <a href="https://tix.qq.com/" class="link-item">腾讯云威胁情报中心 🔥</a>
+                <a href="https://ti.360.net/#/homepage" class="link-item">360威胁情报中心</a>
+                <a href="https://s.threatbook.com/" class="link-item">微步云沙箱</a>
+                <a href="https://nti.nsfocus.com/" class="link-item">绿盟威胁情报中心</a>
+            </div>
+        </div>
+
+        <!-- 收藏卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-file-text card-icon"></i>
+                <h2 class="card-title">引擎 | 搜索</h2>
+            </div>
+            <div class="link-group">
+                <a href="https://www.shodan.io/" class="link-item">撒旦</a>
+                <a href="https://fofa.info/" class="link-item">佛法</a>
+                <a href="https://www.zoomeye.org/" class="link-item">钟馗之眼</a>
+                <a href="https://www.csdn.net/" class="link-item"CSDN 🔥</a>
+                <a href="https://cloud.tencent.com/developer/column?Is=sdk-topnav" class="link-item">腾讯云开发者社区</a>
+                <a href="https://www.itdog.cn/" class="link-item">域名搜索</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- 3. 学习页面 -->
+    <div id="tab-study" class="tab-content">
+        <div class="resource-container">
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-robot card-icon"></i>
+                <h2 class="card-title">学习 | 贴吧</h2>
+            </div>
+            <div class="link-group">
+                <a href="https://developer.aliyun.com/mirror/" class="link-item">alibaba镜像</a>
+            </div>
+        </div>
+      
+
+        <!-- 云盘资源卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-cloud card-icon"></i>
+                <h2 class="card-title">云盘 | 搜索</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">网盘临检 🔥</a>
+            </div>
+        </div>
+
+        <!-- 论坛文档卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-file-text card-icon"></i>
+                <h2 class="card-title">论坛 | 文档</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">Github</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- 4.个人页面 -->
+    <div id="tab-me" class="tab-content">
+        <div class="resource-container">
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-robot card-icon"></i>
+                <h2 class="card-title">学习 | AI</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">MiniMax 🔥</a>
+            </div>
+        </div>
+      
+
+        <!-- 云盘资源卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-cloud card-icon"></i>
+                <h2 class="card-title">云盘 | 搜索</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">网盘临检 🔥</a>
+            </div>
+        </div>
+
+        <!-- 论坛文档卡片 -->
+        <div class="resource-card">
+            <div class="card-header">
+                <i class="bi bi-file-text card-icon"></i>
+                <h2 class="card-title">论坛 | 文档</h2>
+            </div>
+            <div class="link-group">
+                <a href="#" class="link-item">Github</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+        // 平滑滚动+标签页切换逻辑（修复核心问题）
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                // 切换导航激活状态
+                document.querySelectorAll('.main-nav a').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 切换页面内容显示（确保只显示当前标签页）
+                const tabId = this.getAttribute('href');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                const targetTab = document.querySelector(tabId);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                }
+                
+                // 滚动到页面顶部
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+
+        // 搜索按钮点击事件
+        document.querySelector('.search-btn').addEventListener('click', performSearch);
+        
+        // 搜索功能实现
+        function performSearch() {
+            const searchValue = searchInput.value.trim();
+            if (searchValue) {
+                // 实际项目中可以替换为真实的搜索逻辑
+                alert(`正在搜索：${searchValue}\n\n提示：可在此处接入搜索引擎API实现真实搜索功能`);
+                
+                // 高亮显示包含搜索关键词的链接（示例）
+                highlightSearchResults(searchValue);
+            } else {
+                alert('请输入搜索内容');
+            }
+        }
+        
+        // 搜索结果高亮（示例功能）
+        function highlightSearchResults(keyword) {
+            // 移除之前的高亮
+            document.querySelectorAll('.link-item').forEach(item => {
+                item.style.backgroundColor = '';
+                item.style.color = '';
+            });
+            
+            // 高亮匹配的链接
+            document.querySelectorAll('.link-item').forEach(item => {
+                if (item.textContent.toLowerCase().includes(keyword.toLowerCase())) {
+                    item.style.backgroundColor = 'rgba(22, 93, 255, 0.3)';
+                    item.style.color = '#F8FAFC';
+                }
+            });
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            // 预加载背景图片提升体验
+            const bgImage = new Image();
+            bgImage.src = 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/a4071d12b4a84eb99185fcb6635c426d.png~tplv-a9rns2rl98-24:720:720.png?rcl=2025122514480126F1B3EFAECA3A3947FE&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1767250081&x-signature=K4L70z5ub7V9tjYilQIDNL9c3QI%3D';
+            
+            // 初始化搜索框焦点
+            searchInput.focus();
+        });
+    </script>
+</body>
+</html>
